@@ -10,23 +10,22 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist";
-import changePintTypeSlice from "./change_pin_type/changePintTypeSlice";
 import loginSlice from "./login/loginSlice";
+import newsListSlice from "./newsList/newsListSlice";
 
 const persistConfig = {
   key: "root",
   version: 1,
   storage: AsyncStorage,
   blacklist: [
-    "getTransactionHistorySlice",
-    "changType"
+    "newsListSlice"
   ],
   whitelist: ["loginSlice"],
 };
 
 const appReducer = combineReducers({
   loginSlice: loginSlice,
-  changType: changePintTypeSlice
+  newsListSlice: newsListSlice
 });
 
 export const rootReducer = (state: any, action: AnyAction) => {

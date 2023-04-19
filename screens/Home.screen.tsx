@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
-  StyleSheet, Text, TouchableOpacity
+  FlatList,
+  RefreshControl,
+  Image,
+  StyleSheet, TouchableOpacity
 } from "react-native";
 
-import { Avatar, Colors, View } from "react-native-ui-lib";
+import { Avatar, Colors, View, Text } from "react-native-ui-lib";
 
 import FeedbackModal from "../components/FeedbackModal";
 import useFeedback from "../hook/useFeedback";
@@ -12,6 +15,12 @@ import useUser from "../hook/useUser";
 import { useAppDispatch, useAppSelector } from "../redux/hook";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { clearLoginResponse } from "../redux/login/loginSlice";
+import { newsList } from "../redux/newsList/api";
+import { wait } from "../util/utils";
+import HistoryCard from "../components/HistoryCard.component";
+import { NewsShimmer } from "../components/NewsShimmer.component";
+import { clearNewsResponse } from "../redux/newsList/newsListSlice";
+import { Article } from "../redux/newsList/response";
 
 export default function HomeScreen(props: any) {
 
@@ -22,11 +31,52 @@ export default function HomeScreen(props: any) {
 
   const dispatch = useAppDispatch();
 
-  // Login response gotten from redux
-  const loginResponse = useAppSelector((state) => state?.loginSlice?.response);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // User Hook to get user information
+  // News response from Redux
+  const newsResponse = useAppSelector((state) => state?.newsListSlice?.response);
+
+  // Loading status from redux
+  const newsLoading = useAppSelector((state) => state?.newsListSlice?.loading);
+
+  const loadNews = () => {
+    // Clear All loaded news if it exists before loading new list
+    dispatch(clearNewsResponse())
+
+    // Load News from the Redux
+    dispatch(newsList({}));
+  };
+
+  // Handle on list item click
+  const handleOnClick = (item: Article) => {
+    console.log(item);
+  }
+
+  // Handle on list refresh
+  const onRefresh = React.useCallback(() => {
+
+    // shows the refresh indicator
+    setRefreshing(true);
+
+    // Call the load news function
+    loadNews();
+
+    // waits 2 seconds before hidiing indicator
+    wait(2000).then(() => setRefreshing(false));
+
+  }, []);
+
+
+  useEffect(() => {
+    //Load news on component mounted
+    loadNews();
+
+  }, [])
+
+  // Custom User Hook to get user information
   const { avatarName, fullname, email } = useUser();
+
+  const [isOnline, setOnline] = useState<boolean>(true);
 
 
   // Google signout function
@@ -46,8 +96,6 @@ export default function HomeScreen(props: any) {
       console.error(error);
     }
   };
-
-  const [showModal, setShowModal] = useState<boolean>(false);
 
   return (
     <View
@@ -70,22 +118,25 @@ export default function HomeScreen(props: any) {
         </View>
       </View>
 
-      <FeedbackModal
-        label="Setup transaction pin"
-        type="info"
-        buttonType="double"
-        isVisible={showModal}
-        message={"Please Setup Pin to continue"}
-        actionLabel="Proceed"
-        onPress={() => {
-          setShowModal(false);
+      <View style={{ flex: 1 }}>
 
-          props.navigation.navigate("SetupPinScreen");
-        }}
-        onCancel={() => {
-          setShowModal(false);
-        }}
-      />
+        {newsLoading && <NewsShimmer />}
+
+        {newsResponse != undefined && newsResponse?.articles != undefined && <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          data={newsResponse?.articles}
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+          renderItem={({ item }) => (
+            <HistoryCard item={item} onPressed={() => handleOnClick(item)} />
+          )}
+          keyExtractor={(item, index) => "key" + index}
+        ></FlatList>}
+      </View>
+
     </View>
   );
 }

@@ -3,6 +3,7 @@ import { Card, Text, View } from "react-native-ui-lib";
 import { Article } from "../redux/newsList/response";
 import { StyleSheet, Image } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { dateToYMD } from "../util/utils";
 
 
 type Props = {
@@ -38,9 +39,12 @@ const HistoryCard = ({ item, onPressed }: Props) => {
                 source={require("../assets/placeholder_image.png")}
               />}
           </View>
-          <View flex marginL-s2 style={{justifyContent: 'flex-start', height:"100%"}}>
+          <View flex marginL-s2 style={{ justifyContent: 'space-between', height: "100%" }}>
             <Text semiboldT style={{ paddingBottom: 3, fontWeight: 'bold' }}>
               {item?.title}
+            </Text>
+            <Text semiboldT>
+              {dateToYMD(new Date(item.publishedAt))}
             </Text>
           </View>
         </View>

@@ -3,13 +3,11 @@ import {
   Dimensions,
   FlatList,
   RefreshControl,
-  Image,
   StyleSheet, TouchableOpacity
 } from "react-native";
 
 import { Avatar, Colors, View, Text } from "react-native-ui-lib";
 
-import FeedbackModal from "../components/FeedbackModal";
 import useFeedback from "../hook/useFeedback";
 import useUser from "../hook/useUser";
 import { useAppDispatch, useAppSelector } from "../redux/hook";
@@ -49,6 +47,8 @@ export default function HomeScreen(props: any) {
 
   // Handle on list item click
   const handleOnClick = (item: Article) => {
+
+    props.navigation.navigate("NewsDetailScreen", { newsItem: item })
     console.log(item);
   }
 

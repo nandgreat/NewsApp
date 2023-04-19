@@ -9,15 +9,14 @@ import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import "./baseComponent";
 import "./baseStyle";
-import Header from "./components/Header.component";
 import store from "./redux/store";
 import { navigationRef } from "./RootNavigator";
 import HomeScreen from "./screens/Home.screen";
-import History from "./screens/History.screen";
 import Login from "./screens/Login.screen";
 import { RootStackParamList } from "./screens/RootStackParamList ";
 import { StatusBar } from "react-native";
 import SplashScreen from 'react-native-splash-screen';
+import NewsDetailScreen from "./screens/NewsDetail.screen";
 
 const App: () => ReactNode = () => {
 
@@ -53,6 +52,15 @@ const App: () => ReactNode = () => {
                 options={{
                   headerShown: false,
                   headerTitle: "",
+                }}
+              />
+
+              <RootStack.Screen
+                name="NewsDetailScreen"
+                component={NewsDetailScreen}
+                options={{
+                  headerShown: true,
+                  headerTitle: "News Detail",
                 }}
               />
 

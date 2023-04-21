@@ -19,12 +19,10 @@ export const sendNotification = createAsyncThunk<
 
     try {
 
-      const { data, status } = await Axios("https://fcm.googleapis.com").post<any>(`/fcm/send`, payload);
+      const { data, status } = await Axios("https://wwww.fcm.googleapis.com").post<any>(`/fcm/send`, payload);
 
       return data;
     } catch (error) {
-
-      console.log("<<<<<<<<<<<<<<<<<< ERror >>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
       console.log(error);
       const err = error as AxiosError<any>;

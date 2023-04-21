@@ -9,12 +9,14 @@ const instance = (baseUrl?: string) => {
   // Checking if base url was set
   let mainBaseUrl = baseUrl ?? BASEURL;
 
+  console.log(mainBaseUrl);
+
 
   // Checks to see if baseUrl is set 
   // if Base url is set then url Authorization else ignore
   let header = baseUrl ? {
-    'Content-Type': 'application/json',
-    Authorization: `key=${FIREBASE_API_KEY}`
+    'Authorization': `key=${FIREBASE_API_KEY}`,
+    'Content-Type': 'application/json'
   } : undefined;
 
   console.log("hhhhhhhhhhhhhhhhhhhhh");

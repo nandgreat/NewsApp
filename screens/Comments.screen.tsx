@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, TextInput } from "react-native";
-import { Avatar, Colors, View } from "react-native-ui-lib";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, TextInput } from "react-native";
+import { Avatar, Text, Colors, View } from "react-native-ui-lib";
 
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "./RootStackParamList ";
 import firestore from '@react-native-firebase/firestore';
 import firebase from '@react-native-firebase/app';
-import { slugifyString } from "../util/utils";
+import { hideKeyboard, slugifyString } from "../util/utils";
 import useUser from "../hook/useUser";
 import UserComment from "../components/UserComment.component";
 import useFeedback from "../hook/useFeedback";
 import { useAppDispatch } from "../redux/hook";
 import { sendNotification } from "../redux/push_notification/api";
 import { SendNotificationPayload } from "../redux/push_notification/request";
+import Feather from "react-native-vector-icons/Feather";
+
 
 type NewsDetailsRouteProps = RouteProp<RootStackParamList, "CommentScreen">;
 
@@ -24,7 +26,18 @@ export default function CommentScreen(props: any) {
 
   const route = useRoute<NewsDetailsRouteProps>();
 
+  const [currentCommentId, setCurrentCommentId] = useState<{ commentId: string, author: string }>();
+
   const { avatarName, fullname } = useUser()
+
+  const inputRef = useRef(null);
+
+  const handleFocus = () => {
+    hideKeyboard()
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
   const dispatch = useAppDispatch();
 
@@ -66,11 +79,18 @@ export default function CommentScreen(props: any) {
   // Function to add comment to firebase
   const addComment = () => {
 
+
     // Checks if comment was typed in
     if (newComment == '') {
       showFeedback("danger", "Enter comment to continue");
       return;
     }
+
+    if (currentCommentId != undefined) {
+      addReply(currentCommentId)
+      return;
+    }
+
     // Get the Firebase node to push to 
     const docRef = firestore().collection('news').doc(newsId).collection("comments").doc()
     docRef.set({
@@ -84,18 +104,24 @@ export default function CommentScreen(props: any) {
     });
     // Clear Comment after push
     setNewComment('');
+    setCurrentCommentId(undefined)
   };
 
+  const onReplyClicked = (currentCommentId: string, author: string) => {
+    handleFocus();
+    setCurrentCommentId({ commentId: currentCommentId, author: author })
+  }
+
   // Function to handle replies on comment
-  const addReply = (commentId, replyText) => {
+  const addReply = (comment: { commentId: string; author: string }) => {
 
     const timestamp = firebase.firestore.FieldValue.serverTimestamp();
 
     // Get the Firebase node to push to 
-    const commentRef = firestore().collection('news').doc(newsId).collection('comments').doc(commentId);
+    const commentRef = firestore().collection('news').doc(newsId).collection('comments').doc(comment.commentId);
     commentRef.update({
       replies: firebase.firestore.FieldValue.arrayUnion({
-        text: replyText,
+        text: newComment,
         author: fullname,
         image: avatarName,
         timestamp: new Date(),
@@ -103,6 +129,8 @@ export default function CommentScreen(props: any) {
     }).then(() => {
       sendPushNotification()
     });
+    setNewComment("")
+    setCurrentCommentId(undefined)
   };
   const [replyText, setReplyText] = useState("");
 
@@ -110,24 +138,13 @@ export default function CommentScreen(props: any) {
   const renderComment = (comment) => {
     return (
       <View key={comment.id} style={{ paddingLeft: 16 }}>
-        <UserComment text={comment.text} author={comment.author} image={comment.image} />
+        <UserComment text={comment.text} author={comment.author} image={comment.image} onReplyClicked={() => onReplyClicked(comment.id, comment.author)} />
         {comment.replies.map((reply) => (
           <View key={reply.timestamp.toDate().toString()} style={{ paddingLeft: 20, marginTop: 15.0 }}>
-            <UserComment text={reply.text} author={reply.author} image={reply.image} />
+            <UserComment text={reply.text} author={reply.author} image={reply.image} onReplyClicked={() => onReplyClicked(comment.id, comment.author)} />
           </View>
         ))}
 
-        <TextInput
-          placeholder="Reply"
-          placeholderTextColor={Colors.grey40}
-          style={{ color: Colors.grey10 }}
-          value={replyText}
-          onChangeText={setReplyText}
-          onSubmitEditing={() => {
-            addReply(comment.id, replyText);
-            setReplyText('');
-          }}
-        />
       </View>
     );
   };
@@ -137,18 +154,29 @@ export default function CommentScreen(props: any) {
       <View>
         {comments.map((comment) => renderComment(comment))}
       </View>
-      <View style={{ position: 'absolute', bottom: 0, width: '100%', flexDirection: 'row' }}>
-        <View style={{ flex: 1 }}>
-          <TextInput
-            placeholder="Add comment"
-            style={{ backgroundColor: 'white', flex: 1, paddingHorizontal: 10.0 }}
-            placeholderTextColor={Colors.grey40}
-            value={newComment}
-            onChangeText={setNewComment}
-            onSubmitEditing={addComment}
-          />
+      <View style={{ position: 'absolute', bottom: 0, width: '100%' }}>
+        {currentCommentId &&
+          <View row padding-s4 spread backgroundColor={Colors.grey50}>
+            <View row>
+              <Text color={Colors.grey10}>Replying to</Text><Text style={{ fontWeight: 'bold' }}> {currentCommentId?.author}</Text>
+            </View>
+            <View>
+              <Feather name="x" size={20} color="grey" onPress={() => setCurrentCommentId(undefined)} /></View>
+          </View>}
+        <View row>
+          <View style={{ flex: 1 }}>
+            <TextInput
+              placeholder="Add comment"
+              ref={inputRef}
+              style={{ backgroundColor: 'white', color: Colors.grey30, flex: 1, paddingHorizontal: 10.0 }}
+              placeholderTextColor={Colors.grey40}
+              value={newComment}
+              onChangeText={setNewComment}
+              onSubmitEditing={addComment}
+            />
+          </View>
+          <Text onPress={addComment} style={{ fontSize: 20.0, padding: 20.0, backgroundColor: Colors.grey40 }}>Send</Text>
         </View>
-        <Text onPress={addComment} style={{ fontSize: 20.0, padding: 20.0, backgroundColor: Colors.grey40 }}>Send</Text>
       </View>
     </View>
   );

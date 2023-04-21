@@ -1,12 +1,7 @@
-import { useTheme } from "@react-navigation/native";
-import LottieView from "lottie-react-native";
-import React, { useEffect, useState } from "react";
-import { Appearance, Button, Text, TextInput } from "react-native";
-import { Avatar, Colors, View } from "react-native-ui-lib";
-import { colorsPalette } from "react-native-ui-lib/src/style/colorsPalette";
-import firestore from '@react-native-firebase/firestore';
+import React, { useState } from "react";
+import { Avatar, Colors, View, Text } from "react-native-ui-lib";
 
-export default function UserComment({ text, author, image }) {
+export default function UserComment({ text, author, image, onReplyClicked }) {
 
     // Define the Comment component
     const [comment, setComment] = useState('');
@@ -15,14 +10,17 @@ export default function UserComment({ text, author, image }) {
 
     // Render the comment and its child comments
     return (
-        <View row>
-            <Avatar
-                source={{ uri: image }}
-                size={35} />
-            <View marginL-s2>
-                <Text style={{ color: Colors.grey10, fontWeight: 'bold' }}>{author}</Text>
-                <Text style={{ color: Colors.grey10 }}>{text}</Text>
+        <View>
+            <View row>
+                <Avatar
+                    source={{ uri: image }}
+                    size={35} />
+                <View marginL-s2>
+                    <Text style={{ color: Colors.grey10, fontWeight: 'bold' }}>{author}</Text>
+                    <Text style={{ color: Colors.grey10 }}>{text}</Text>
+                </View>
             </View>
+            <Text marginL-s10 marginB-s4 onPress={onReplyClicked} color={Colors.grey40}>Reply</Text>
         </View>
     );
 };

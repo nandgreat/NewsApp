@@ -1,6 +1,5 @@
 import React from 'react'
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { Colors, View, Text, Image, Button } from 'react-native-ui-lib'
+import { View, Text, Image, Button } from 'react-native-ui-lib'
 
 function NoInternet({ onRetry }: { onRetry: () => void }) {
     return (

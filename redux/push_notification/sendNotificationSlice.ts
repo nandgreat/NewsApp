@@ -2,13 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import { sendNotification } from "./api";
 import { User } from "@react-native-google-signin/google-signin";
 
-type loginState = {
+type sendNotificationState = {
   response: User;
   loading: boolean;
   error: any;
 };
 
-const initialState = {} as loginState;
+const initialState = {} as sendNotificationState;
 
 const sendNotificationSlice = createSlice({
   name: "send_notification",
@@ -16,13 +16,6 @@ const sendNotificationSlice = createSlice({
 
   reducers: {
     clearSendNotificationResponse: () => initialState,
-
-    saveUserData: (state, action) => {
-      state.response = action.payload;
-    },
-    updateConfigureSecurity: (state, action) => {
-      state!.response! = action.payload;
-    },
   },
 
   extraReducers: (builder) => {
@@ -42,6 +35,6 @@ const sendNotificationSlice = createSlice({
   },
 });
 
-export const { clearSendNotificationResponse, saveUserData, updateConfigureSecurity } = sendNotificationSlice.actions;
+export const { clearSendNotificationResponse } = sendNotificationSlice.actions;
 
 export default sendNotificationSlice.reducer;

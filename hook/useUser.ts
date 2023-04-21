@@ -11,6 +11,7 @@ const useUser = () => {
   let avatarName = "";
   let fullname = "";
   let email = "";
+  let userId = "";
 
   // avatarName = profile != null ?  profile?.firstname![0] + " " +  profile?.lastname! })[0] : "";
   avatarName = profile != null ? profile?.photo! : "";
@@ -18,12 +19,14 @@ const useUser = () => {
   fullname = profile != null ? profile?.name! : "";
 
   email = profile != null ? profile?.email! : "";
+  userId = profile != null ? profile?.id! : "";
 
 
   return {
     fullname,
     avatarName,
-    email
+    email,
+    userId
   };
 };
 

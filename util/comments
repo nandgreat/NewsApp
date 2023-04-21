@@ -1,0 +1,7 @@
+export type CustomComment = {
+    id: string;
+    content: string;
+    author: string;
+    createdAt: any;
+    replies?: Comment[];
+  }

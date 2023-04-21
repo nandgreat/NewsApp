@@ -8,4 +8,7 @@ export type RootStackParamList = {
   NewsDetailScreen: {
     newsItem: Article
   }
+  CommentScreen: {
+    newsItem: Article
+  }
 };

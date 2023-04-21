@@ -1,17 +1,24 @@
 import axios from "axios";
-import { BASEURL } from "../util/constant";
+import { BASEURL, FIREBASE_API_KEY } from "../util/constant";
 
-const instance = (useAuth?: boolean) => {
+const instance = (baseUrl?: string) => {
   let count = 1;
   let activeToken = "1";
-  console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
-  console.log(BASEURL);
-  
+
+  let mainBaseUrl = baseUrl ?? BASEURL;
+
+  // Checks to see if baseUrl is set 
+  // if Base url is set then url Authorization else ignore
+  let header = baseUrl ? {
+    Authorization: `key=${FIREBASE_API_KEY}`
+  } : undefined;
+
   const axiosConfig = axios.create({
     baseURL: `${__DEV__
-      ? BASEURL
-      : BASEURL
+      ? mainBaseUrl
+      : mainBaseUrl
       }`,
+    headers: header,
     timeout: 60000,
   });
 

@@ -50,7 +50,7 @@ export default function NewsDetailScreen(props: any) {
           <View style={styles.line} />
 
           <View>
-            <Text style={{ fontSize: 15.0 }}>{newItem.description}</Text>
+            <Text style={styles.otherText}>{newItem.description}</Text>
           </View>
         </View>
       </View>
@@ -61,8 +61,8 @@ export default function NewsDetailScreen(props: any) {
 
 const styles = StyleSheet.create({
   image: { width: "100%", height: 300 },
-  title: { fontSize: 20.0, fontWeight: 'bold' },
-  otherText: { fontSize: 15.0 },
+  title: { fontSize: 20.0, fontWeight: 'bold',  color: Colors.grey20 },
+  otherText: { fontSize: 15.0,  color: Colors.grey40 },
   line: { height: 1.0, marginVertical: 20.0, backgroundColor: Colors.grey50 }
 })
 

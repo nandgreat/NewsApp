@@ -16,7 +16,7 @@ export const wait = (timeout: any) => {
 };
 
 export function dateToYMD(date) {
-  var strArray=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var strArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var d = date.getDate();
   var m = strArray[date.getMonth()];
   var y = date.getFullYear();
@@ -36,6 +36,13 @@ export async function retrieveItem(key: string) {
     return error.toString();
   }
 }
+
+export const slugifyString = str => str
+  .toLowerCase()
+  .trim()
+  .replace(/[^\w\s-]/g, '')
+  .replace(/[\s_-]+/g, '-')
+  .replace(/^-+|-+$/g, '');
 
 export async function storeItem(key: string, item: any) {
   try {

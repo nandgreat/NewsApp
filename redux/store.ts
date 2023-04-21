@@ -12,20 +12,23 @@ import {
 } from "redux-persist";
 import loginSlice from "./login/loginSlice";
 import newsListSlice from "./newsList/newsListSlice";
+import sendNotificationSlice from "./push_notification/sendNotificationSlice";
 
 const persistConfig = {
   key: "root",
   version: 1,
   storage: AsyncStorage,
   blacklist: [
-    "newsListSlice"
+    "newsListSlice",
+    "sendNotificationSlice"
   ],
   whitelist: ["loginSlice"],
 };
 
 const appReducer = combineReducers({
   loginSlice: loginSlice,
-  newsListSlice: newsListSlice
+  newsListSlice: newsListSlice,
+  sendNotificationSlice: sendNotificationSlice
 });
 
 export const rootReducer = (state: any, action: AnyAction) => {

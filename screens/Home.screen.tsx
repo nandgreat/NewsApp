@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -19,23 +19,37 @@ import HistoryCard from "../components/HistoryCard.component";
 import { NewsShimmer } from "../components/NewsShimmer.component";
 import { clearNewsResponse } from "../redux/newsList/newsListSlice";
 import { Article } from "../redux/newsList/response";
+import firestore from '@react-native-firebase/firestore';
+import { Modalize } from "react-native-modalize";
+import Feather from "react-native-vector-icons/Feather";
+import { ProgressDialogComponent } from "../components/ProgressDialog.component";
+
 
 export default function HomeScreen(props: any) {
 
   // Height and width of the device declared
   const { width, height } = Dimensions.get("window");
 
+  const windowHeight = Dimensions.get("window").height;
+
+  const [showProgressDialog, setShowProgressDialog] = useState(false);
+
   const { showFeedback } = useFeedback();
 
   const dispatch = useAppDispatch();
 
   const [refreshing, setRefreshing] = useState(false);
+  const fundTransferSelect = useRef<Modalize>(null);
+
+  const [selectedNews, setSelectedNews] = useState<Article | null>();
 
   // News response from Redux
   const newsResponse = useAppSelector((state) => state?.newsListSlice?.response);
 
   // Loading status from redux
   const newsLoading = useAppSelector((state) => state?.newsListSlice?.loading);
+
+
 
   const loadNews = () => {
     // Clear All loaded news if it exists before loading new list
@@ -51,6 +65,15 @@ export default function HomeScreen(props: any) {
     props.navigation.navigate("NewsDetailScreen", { newsItem: item })
     console.log(item);
   }
+  // Handle on list item click
+  const handleCommentClick = (item: Article) => {
+    props.navigation.navigate("CommentScreen", { newsItem: item })
+  }
+
+  useEffect(() => {
+    if (selectedNews == null) fundTransferSelect?.current?.close();
+    else fundTransferSelect?.current?.open();
+  }, [selectedNews]);
 
   // Handle on list refresh
   const onRefresh = React.useCallback(() => {
@@ -71,6 +94,9 @@ export default function HomeScreen(props: any) {
     //Load news on component mounted
     loadNews();
 
+    return () => setShowProgressDialog(false);
+
+
   }, [])
 
   // Custom User Hook to get user information
@@ -83,6 +109,9 @@ export default function HomeScreen(props: any) {
   const signOut = async () => {
 
     try {
+
+      setShowProgressDialog(true);
+
       // Revoking google account access and signout
       await GoogleSignin.revokeAccess();
       await GoogleSignin.signOut();
@@ -94,6 +123,7 @@ export default function HomeScreen(props: any) {
       props.navigation.replace("Login")
     } catch (error) {
       console.error(error);
+      setShowProgressDialog(false);
     }
   };
 
@@ -118,7 +148,7 @@ export default function HomeScreen(props: any) {
         </View>
       </View>
 
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, marginTop: 20.0 }}>
 
         {newsLoading && <NewsShimmer />}
 
@@ -131,11 +161,13 @@ export default function HomeScreen(props: any) {
             flexGrow: 1,
           }}
           renderItem={({ item }) => (
-            <HistoryCard item={item} onPressed={() => handleOnClick(item)} />
+            <HistoryCard item={item} onCommentPress={() => handleCommentClick(item)} onPressed={() => handleOnClick(item)} />
           )}
           keyExtractor={(item, index) => "key" + index}
         ></FlatList>}
       </View>
+
+      <ProgressDialogComponent visible={showProgressDialog} progressText={"Signing out"} />
 
     </View>
   );

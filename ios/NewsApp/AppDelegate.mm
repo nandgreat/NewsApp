@@ -43,7 +43,7 @@
   bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
 #endif
 
-  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"NNPCRetailCLI", nil);
+  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"NewsApp", nil);
 
   if (@available(iOS 13.0, *)) {
     rootView.backgroundColor = [UIColor systemBackgroundColor];

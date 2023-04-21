@@ -12,6 +12,7 @@ import auth from '@react-native-firebase/auth';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 import { login } from "../redux/login/api";
+import SocialLoginBtn from "../components/SociaLoginBtn.component";
 
 
 export default function Login(props: any) {
@@ -43,7 +44,6 @@ export default function Login(props: any) {
     // Sign-in the user with the credential
     return auth().signInWithCredential(facebookCredential);
   }
-
 
   // Function that initiates the login in redux
   const GoogleSingUp = async () => {
@@ -77,7 +77,7 @@ export default function Login(props: any) {
     if (loginError == undefined) return;
 
     // Show feedback when there's an error
-    showFeedback('danger', "loginError");
+    showFeedback('danger', "Login Error");
     console.log(loginError);
 
   }, [loginError])
@@ -90,19 +90,9 @@ export default function Login(props: any) {
 
         <View center style={{ marginTop: 40 }}>
 
-          <TouchableOpacity onPress={GoogleSingUp} >
-            <Image
-              source={require("../assets/signin-button.png")}
-              resizeMode="contain"
-              style={{ width: 300, height: 50, }}
-            />
-          </TouchableOpacity>
+        <SocialLoginBtn type="google" onPress={GoogleSingUp} />
+        <SocialLoginBtn type="facebook" onPress={onFacebookButtonPress} />
 
-          <Button
-            style={{ marginTop: 30.0 }}
-            label="Facebook Sign-In"
-            onPress={() => onFacebookButtonPress().then(() => console.log('Signed in with Facebook!'))}
-          />
         </View>
       </View>
 

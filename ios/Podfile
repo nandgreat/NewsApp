@@ -20,17 +20,9 @@ target 'NewsApp' do
   )
   permissions_path = '../node_modules/react-native-permissions/ios'
 
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
-
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   
   pod 'SwiftLint', '~> 0.50.1'
-
-  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
-
-  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
-
-  pod 'react-native-location', :path => '../node_modules/react-native-location'
 
   target 'NewsAppTests' do
     inherit! :complete

@@ -17,6 +17,8 @@ import { RootStackParamList } from "./screens/RootStackParamList ";
 import { StatusBar } from "react-native";
 import SplashScreen from 'react-native-splash-screen';
 import NewsDetailScreen from "./screens/NewsDetail.screen";
+import CommentsScreen from "./screens/Comments.screen";
+import { requestUserPermission, subscribeToGeneral } from "./util/pushnotification_helper";
 
 const App: () => ReactNode = () => {
 
@@ -26,6 +28,9 @@ const App: () => ReactNode = () => {
   let persistor = persistStore(store);
 
   useEffect(() => {
+
+    requestUserPermission();
+    subscribeToGeneral();
 
     // Hide Splash screen using Library
     SplashScreen.hide();
@@ -61,6 +66,15 @@ const App: () => ReactNode = () => {
                 options={{
                   headerShown: true,
                   headerTitle: "News Detail",
+                }}
+              />
+
+              <RootStack.Screen
+                name="CommentScreen"
+                component={CommentsScreen}
+                options={{
+                  headerShown: true,
+                  headerTitle: "Comments",
                 }}
               />
 

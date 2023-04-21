@@ -22,7 +22,7 @@ export default function Login(props: any) {
   const loginError = useAppSelector((state) => state?.loginSlice.error);
   const { showFeedback } = useFeedback();
 
-
+  // Facebook login had not been approved for this app as at the time of Sending this code
   async function onFacebookButtonPress() {
     // Attempt login with permissions
     const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
@@ -66,7 +66,7 @@ export default function Login(props: any) {
   }, []);
 
   useEffect(() => {
-    if (loginResponse == undefined) return; 
+    if (loginResponse == undefined) return;
 
     // Navigate to Home screen if user is logged in
     if (loginResponse.user != undefined) props.navigation.replace("HomeScreen")
@@ -90,8 +90,8 @@ export default function Login(props: any) {
 
         <View center style={{ marginTop: 40 }}>
 
-        <SocialLoginBtn type="google" onPress={GoogleSingUp} />
-        <SocialLoginBtn type="facebook" onPress={onFacebookButtonPress} />
+          <SocialLoginBtn type="google" onPress={GoogleSingUp} />
+          <SocialLoginBtn type="facebook" onPress={onFacebookButtonPress} />
 
         </View>
       </View>

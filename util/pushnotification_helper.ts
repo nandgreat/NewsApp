@@ -45,11 +45,9 @@ export const notificationLister = (navigation) => {
             }
             // setLoading(false);
         });
- 
+
     messaging().onMessage(async remoteMessage => {
         console.log("----------------------------------- Firebase Foreground message -----------------------------------");
-        
-        Alert.alert(remoteMessage.notification?.title!, remoteMessage.notification?.body);
     });
 
 

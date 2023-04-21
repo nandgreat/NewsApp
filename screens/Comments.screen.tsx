@@ -10,6 +10,9 @@ import { slugifyString } from "../util/utils";
 import useUser from "../hook/useUser";
 import UserComment from "../components/UserComment.component";
 import useFeedback from "../hook/useFeedback";
+import { useAppDispatch } from "../redux/hook";
+import { sendNotification } from "../redux/push_notification/api";
+import { SendNotificationPayload } from "../redux/push_notification/request";
 
 type NewsDetailsRouteProps = RouteProp<RootStackParamList, "CommentScreen">;
 
@@ -22,6 +25,8 @@ export default function CommentScreen(props: any) {
   const route = useRoute<NewsDetailsRouteProps>();
 
   const { avatarName, fullname } = useUser()
+
+  const dispatch = useAppDispatch();
 
   const newsItem = route.params.newsItem;
 
@@ -46,6 +51,17 @@ export default function CommentScreen(props: any) {
     return () => unsubscribe();
   }, []);
 
+  const sendPushNotification = () => {
+    let payload: SendNotificationPayload = {
+      notification: {
+        body: `${fullname} Comment on your a Post`,
+        title: "New Comment"
+      },
+      to: "/topics/general"
+    };
+    dispatch(sendNotification(payload))
+  }
+
 
   // Function to add comment to firebase
   const addComment = () => {
@@ -63,6 +79,8 @@ export default function CommentScreen(props: any) {
       image: avatarName,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       replies: [],
+    }).then(() => {
+      sendPushNotification()
     });
     // Clear Comment after push
     setNewComment('');
@@ -82,6 +100,8 @@ export default function CommentScreen(props: any) {
         image: avatarName,
         timestamp: new Date(),
       }),
+    }).then(() => {
+      sendPushNotification()
     });
   };
   const [replyText, setReplyText] = useState("");
